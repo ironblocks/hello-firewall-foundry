@@ -139,7 +139,7 @@ For the purpose of simplicity, all the contracts that are deployed and used in t
 2. As an additional layer of security, only policies that have been approved by a `Firewall Owner` will be available to `Firewall Consumers` for them to subscribe to said policies.  
    This is done by calling `setPolicyStatus(POLICY_ADDRESS, BOOLEAN)` on the `Firewall`. > The `Firewall Owner` in this demo is the same account that deploys the `HelloFirewall`.
 
-   > > In real world scenarios, the `Firewall Owner` may be any principal _(person, people, or organization)_, as governed or decentralized as needed _(i.e. DAO etc.)_
+   > In real world scenarios, the `Firewall Owner` may be any principal _(person, people, or organization)_, as governed or decentralized as needed _(i.e. DAO etc.)_
 
 3. Lastly, our `HelloFirewall` smart contract needs to tell the `Firewall` what security policies should be configured to protect it. In our case, we tell the `Firewall` that we want the `HelloFirewallPolicy` security policy to protect any calls to our smart contract. We do this with `addGlobalPolicy(OUR_ADDRESS, POLICY_ADDRESS)`.
    > Note that only functions that have the `firewallProtected` modifier will be protected by the `Firewall`
