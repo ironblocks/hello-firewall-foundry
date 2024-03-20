@@ -149,5 +149,5 @@ For the purpose of simplicity, all the contracts that are deployed and used in t
 ## External References
 
 - Official Documentation
-- Discord Channel
-- Website
+- [Discord Channel](https://discord.com/channels/1065679814289268929/1065706027472928830)
+- [Website](https://www.ironblocks.com)
