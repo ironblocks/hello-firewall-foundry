@@ -1,6 +1,11 @@
 # Hello Firewall
 
+![Tests](https://github.com/ironblocks/hello-firewall-foundry/actions/workflows/tests.yml/badge.svg)
+
 Everything you need to get started with Ironblocks' Firewall using [Foundry](https://book.getfoundry.sh/).
+
+> _Using Hardhat?  
+> we're working on a hardhat version of this repo - stay tuned_
 
 **Table Of Contents**
 
