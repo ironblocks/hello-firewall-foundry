@@ -1,6 +1,6 @@
 # Hello Firewall
 
-Everything you need to get started with Ironblocks' Firewall using Foundry.
+Everything you need to get started with Ironblocks' Firewall using [Foundry](https://book.getfoundry.sh/).
 
 **Table Of Contents**
 
@@ -24,13 +24,14 @@ This project serves as a **Hello World** example for getting started with Ironbl
 It includes 2 _(very)_ simple contracts to demonstrate how the Firewall works:
 
 - `HelloFirewall.sol` - a simple counter-like smart contract
+
 - `HelloFirewallPolicy.sol` - a security policy that limits counter increments to a set threshold
 
 ## Start Here
 
 #### Prerequisites
 
-1. This project uses Foundry, so make sure you have that installed before continuing.
+1. This project uses [Foundry](https://book.getfoundry.sh/), so make sure you have it installed before continuing.
 
 #### Build
 
@@ -42,7 +43,7 @@ It includes 2 _(very)_ simple contracts to demonstrate how the Firewall works:
 
 #### Deploy & Setup
 
-1. Open a new terminal, and start a local development with Anvil by running:
+1. Open a new terminal, and start a local development node with [Anvil](https://book.getfoundry.sh/anvil/) by running:
 
    ```shell
    anvil
@@ -66,7 +67,7 @@ It includes 2 _(very)_ simple contracts to demonstrate how the Firewall works:
 
 ## Using The App
 
-Now that everything is deployed, if you try to call `increment()` on the `HelloFirewall` smart contract, you'll notice that only the first call works.
+Now that everything is deployed, if you try to call `increment()` on the `HelloFirewall` smart contract multiple times, you'll notice that only the first call works.
 
 #### Try It
 
@@ -85,9 +86,9 @@ Now that everything is deployed, if you try to call `increment()` on the `HelloF
 
 #### Hello Firewall Policy
 
-The second transaction failed, because the `HelloFirewallPolicy` is preventing increments larger than a configured threshold. For simplicity, the default threshold is set to **`1`**.
+The second transaction failed, because the `HelloFirewallPolicy` is preventing increments larger than a configured threshold. For simplicity, the default threshold is set to **`1`**, so only the first increment call passes _(i.e. we can't increment to a number larger than **`1`**)_.
 
-1. Run the `setIncrementThreshold` Solidity Script which is hardcoded to update the threshold to **`3`**:
+1. Run the `setIncrementThreshold` Solidity Script, which is hardcoded to update the threshold to **`3`**:
 
    ```shell
     forge script \
@@ -109,7 +110,7 @@ The second transaction failed, because the `HelloFirewallPolicy` is preventing i
 
    > _\* run this twice_
 
-3. Lastly, if you try to call `Increment` for a third time, it will again be prevented by the `HelloFirewallPolicy`.
+3. Last, if you try to call `Increment` for a third time, it will again be prevented by the `HelloFirewallPolicy`.
 
 ## Technical Details
 
@@ -117,34 +118,36 @@ If you examine the `SetupEverything` Solidity Script, you'll notice there are se
 
 #### Ownership
 
-For the purpose of simplicity, all the contracts that are deployed and used in this project are owned by the same account - the default first account provided by `Anvil`.
+For the purpose of simplicity, all the contracts that are deployed and used in this project are owned by the same account - the default first account provided by [Anvil](https://book.getfoundry.sh/anvil/).
 
 #### Contracts
-
-- **`Firewall.sol`** - this is the smart contract for the Firewall. It provides methods that allow a Firewall Consumer to subscribe or unsubscribe to security policies. It also allows the Firewall Owner to approve or disapprove which security policies will be available to Firewall Consumers
-
-  > The `Firewall Owner` is the principal that deployed the Firewall
-  >
-  > The `Firewall Consumer` is a smart contract - such as our `HelloFirewall.sol` - which inherits the `FirewallConsumer` so that it can consume security services from the Firewall.
 
 - **`HelloFirewall.sol`** - this is our demo counter smart contract
 
 - **`HelloFirewallPolicy.sol`** - this is our custom security policy, which prevents anyone from incrementing the counter above a configurable threshold
+
+- **`Firewall.sol`** - this is the smart contract for the Firewall. It provides methods that allow a Firewall Consumer to subscribe or unsubscribe to security policies. It also allows the Firewall Owner to approve or disapprove what security policies will be available to Firewall Consumers
+
+  > The `Firewall Owner` is the principal _(person, people, or organization)_ that deployed the Firewall
+  >
+  > A `Firewall Consumer` is a smart contract - such as our `HelloFirewall.sol` - which inherits the `FirewallConsumer.sol` contract so that it can consume security services from the Firewall.
 
 #### Internal Wiring
 
 1. Every transaction sent to our `HelloFirewall` contract will be examined the `Firewall`. For this to work, we first need to tell it what `Firewall` to use.  
    We do this by calling `setFirewall(FIREWALL_ADDRESS)` on the `HelloFirewall` smart contract.
 
-2. As an additional layer of security, only policies that have been approved by a `Firewall Owner` will be available to `Firewall Consumers` for them to subscribe to said policies.  
-   This is done by calling `setPolicyStatus(POLICY_ADDRESS, BOOLEAN)` on the `Firewall`. > The `Firewall Owner` in this demo is the same account that deploys the `HelloFirewall`.
+2. As an additional layer of security, only policies that have been approved by a `Firewall Owner` will be available to `Firewall Consumers` for them to subscribe to.  
+   This is done by calling `setPolicyStatus(POLICY_ADDRESS, BOOLEAN)` on the `Firewall`.
+
+   > The `Firewall Owner` in this demo is the same account that deploys the `HelloFirewall`.
 
    > In real world scenarios, the `Firewall Owner` may be any principal _(person, people, or organization)_, as governed or decentralized as needed _(i.e. DAO etc.)_
 
-3. Lastly, our `HelloFirewall` smart contract needs to tell the `Firewall` what security policies should be configured to protect it. In our case, we tell the `Firewall` that we want the `HelloFirewallPolicy` security policy to protect any calls to our smart contract. We do this with `addGlobalPolicy(OUR_ADDRESS, POLICY_ADDRESS)`.
-   > Note that only functions that have the `firewallProtected` modifier will be protected by the `Firewall`
+3. Last, our `HelloFirewall` smart contract needs to tell the `Firewall` what security policies should be configured to protect it. In our case, we tell the `Firewall` that we want the `HelloFirewallPolicy` security policy to protect all calls to our smart contract. We do this by calling `addGlobalPolicy(OUR_ADDRESS, POLICY_ADDRESS)` on the `Firewall`.
+   > Note that within our `HelloFirewall` example contract, only functions that have the `firewallProtected` modifier will be protected by the `Firewall`
    >
-   > More advanced modifiers are also available, see the official documentation for more info _(link below)_
+   > More advanced modifiers and configuration options are also available, see the official documentation for more info _(link below)_
 
 ## External References
 
